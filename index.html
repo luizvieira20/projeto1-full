@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto 1</title>
+</head>
+<body>
+    <h1 id="frase">Frase aqui</h1>
+    <hr>
+    <button onclick="fraseAleatoria()">Gere uma frase aleatória</button>
+    <hr>
+    <input type="number" id="numero">
+    <button onclick="fraseID()">Gere uma frase por ID</button>
+
+</body>
+<script>
+
+    function fraseAleatoria(){
+        ajax('https://api.adviceslip.com/advice', (resp) => { 
+            document.getElementById('frase').innerHTML = JSON.parse(resp).slip.advice;
+        });
+    }
+
+    function fraseID(){
+        ajax('https://api.adviceslip.com/advice/' + document.getElementById('numero').value, (resp) => { 
+            document.getElementById('frase').innerHTML = JSON.parse(resp).slip.advice ;
+        });
+    }
+
+    function ajax(url, callback) {
+        const xmlhttp = new XMLHttpRequest();
+        xmlhttp.open('GET', url, true);
+        xmlhttp.onreadystatechange = function () {
+            if (xmlhttp.readyState === 4 && xmlhttp.status === 200) callback(xmlhttp.responseText);
+        }
+        xmlhttp.send();
+    }
+
+</script>
+</html>
