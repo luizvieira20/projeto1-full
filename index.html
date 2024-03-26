@@ -6,16 +6,61 @@
     <title>Projeto 1</title>
 </head>
 <body>
-    <h1 id="frase">Frase aqui</h1>
+    <h1 id="frase"></h1>
     <hr>
     <button onclick="fraseAleatoria()">Gere uma frase aleatória</button>
     <hr>
     <input type="number" id="numero">
-    <button onclick="fraseID()">Gere uma frase por ID</button>
+    <button onclick="fraseID()">Gere uma frase pelo ID</button>
     <h3 id="erro"></h3>
+    <hr>
+    <input type="text" id="palavra">
+    <button onclick="fraseText()">Gere frases que contenham a palavra (em inglês!)</button>
+    <h4 id="resultado"></h4>
+    <h3 id="lista"></h3>
+    <h3 id="erro2"></h3>
+
 
 </body>
 <script>
+
+    function fraseText(){
+        var palavra = document.getElementById('palavra');
+        var erro = document.getElementById('erro2');
+        var result = document.getElementById('resultado');
+        var lista = document.getElementById('lista');
+
+        if(palavra.value.length >= 2){
+            ajax('https://api.adviceslip.com/advice/search/' + palavra.value, (resp) => { 
+                var num = 0;
+                var frases = JSON.parse(resp);
+
+                if(frases.total_results > 0){
+                    var f = frases.slips;
+
+                    let listaHTML = "<ul>";
+                    f.forEach(frases => {
+                        num += 1;
+                        listaHTML += `<li>${frases.advice}</li>`;
+                    });
+
+                    listaHTML += "</ul>";
+
+                    result.innerHTML = "Total de frases: " + num;
+                    lista.innerHTML = listaHTML;
+                    erro.innerHTML = "";
+                }else{
+                    erro.innerHTML = "Palavra não encontrada!";
+                    lista.innerHTML = "";
+                }
+            });
+        }else{
+            lista.innerHTML = "";
+            frase.innerHTML = "";
+            erro.innerHTML = "Erro! Digite uma palavra válida!";
+            result.innerHTML = "";
+        }
+    }
 
     function fraseAleatoria(){
         ajax('https://api.adviceslip.com/advice', (resp) => { 
@@ -30,12 +75,12 @@
 
         if(num > 0){
             ajax('https://api.adviceslip.com/advice/' + num, (resp) => { 
-                document.getElementById('frase').innerHTML = JSON.parse(resp).slip.advice;
+                frase.innerHTML = JSON.parse(resp).slip.advice;
                 erro.innerHTML = "";
             });
         }else{
             frase.innerHTML = "";
-            document.getElementById('erro').innerHTML = "Erro! Digite um número válido ou maior que zero!";
+            erro.innerHTML = "Erro! Digite um número válido ou maior que zero!";
         }
 
     }
