@@ -12,6 +12,7 @@
     <hr>
     <input type="number" id="numero">
     <button onclick="fraseID()">Gere uma frase por ID</button>
+    <h3 id="erro"></h3>
 
 </body>
 <script>
@@ -23,9 +24,20 @@
     }
 
     function fraseID(){
-        ajax('https://api.adviceslip.com/advice/' + document.getElementById('numero').value, (resp) => { 
-            document.getElementById('frase').innerHTML = JSON.parse(resp).slip.advice ;
-        });
+        var num = document.getElementById('numero').value;
+        var erro = document.getElementById('erro');
+        var frase = document.getElementById('frase');
+
+        if(num > 0){
+            ajax('https://api.adviceslip.com/advice/' + num, (resp) => { 
+                document.getElementById('frase').innerHTML = JSON.parse(resp).slip.advice;
+                erro.innerHTML = "";
+            });
+        }else{
+            frase.innerHTML = "";
+            document.getElementById('erro').innerHTML = "Erro! Digite um número válido ou maior que zero!";
+        }
+
     }
 
     function ajax(url, callback) {
